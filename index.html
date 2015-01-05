@@ -18,7 +18,7 @@
         <h1>Solar System</h1>
         <p>A model of the current Solar System created with Three.js and custom shaders. </p>
 
-        <p class="view"><a href="https://github.com/devgabrielcoman/SolarSystem">View the Project on GitHub</a> 
+        <p class="view"><a href="https://github.com/devgabrielcoman/SolarSystem" target="_blank">View the Project on GitHub</a> 
       </header>
       <section>
         <h3>
@@ -29,7 +29,7 @@
           eight surrounding planets.
         </p>
         <p>
-          <a href="example/solarsystem.html">View the live example here</a>
+          <a href="example/solarsystem.html" target="_blank">View the live example here</a>
         </p>
         <p>
           <img src="resources/img_1.jpg"/>
@@ -44,7 +44,14 @@
           Shaders
         </h3>
         <p>
-          For this example I created two shader pairs (vertex and fragment). 
+          For this example I created two custom shader pairs (vertex and fragment), besides the one thas
+          come with Three.js. 
+        </p>
+        <p>
+          The first vertex shader is a very simple one that does the basic <i>gl_Position</i> calculation and then passes that info the fragment shader. This in turn calculates a very simple point light (very little ambient color, diffuse with no attenuation, and no specilar component ) to give the planets a shadow / dark side when not facing the sun.
+        </p>
+        <p>
+          The second pair of shaders act as a post-processing step of sorts, performing a horizontal and then vertical blur on the scene, to give the planets and sun a "blurry edge".
         </p>
         <!-- <h3>
 <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3> -->
