@@ -1,0 +1,34 @@
+// varyings from the vertexshader
+varying vec3 vNormal;
+varying vec2 vUV;
+varying vec3 vPositionWorldspace; 
+
+// uniforms sent from the main program
+uniform sampler2D texture1;
+uniform int has_light;
+			
+// calculates a fake-ish point-light, emanating from the Sun
+// that has no attenuation
+vec4 sunLight(){
+	vec3 color = vec3(1, 1, 1);
+	vec3 position = vec3(0, 0, 0);
+	float ambientIntensity = 0.005;
+	float diffuseIntensity = 0.75;
+	vec3 direction = normalize(vPositionWorldspace - position);
+				
+	vec3 ambientColor = ambientIntensity * color;
+	vec3 diffuseColor = vec3(0, 0, 0);
+
+	float diffuseFactor = dot(vNormal, -direction);
+	if (diffuseFactor > 0.0){
+		diffuseColor = diffuseIntensity * diffuseFactor * color;
+	}
+
+	return vec4(ambientColor + diffuseColor, 1);
+}
+
+void main() {
+	vec4 sun = vec4(1,1,1,1);
+	if (has_light == 1) sun = sunLight();
+	gl_FragColor = texture2D(texture1, vUV) * sun;
+}
