@@ -1,0 +1,14 @@
+varying vec3 vNormal;
+varying vec2 vUV;
+varying vec3 vPositionWorldspace; 
+
+void main() {
+
+	// assign values to varyings
+	vNormal = normal;
+	vUV = uv;
+	vPositionWorldspace = (modelMatrix * vec4(position,1)).xyz;
+
+	// set final position
+	gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);		
+}
