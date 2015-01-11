@@ -44,26 +44,27 @@ var planetsScene = new THREE.Scene();
 // create planets, from the sun to neptune, with varying diameters and radiuses;
 // the information stored here is used for movement as well
 var planets = [];
-planets.push({ cx: 0, cz: 0, radius: 1,    theta: 16, omega: 2,    diameter: 1,     texture: 'res/sun.png',     has_light: 0 });
-planets.push({ cx: 0, cz: 0, radius: 4.6,  theta: 47, omega: 1.9,  diameter: 0.25,  texture: 'res/mercury.png', has_light: 1 });
-planets.push({ cx: 0, cz: 0, radius: 7.1,  theta: 22, omega: 1.75, diameter: 0.6,   texture: 'res/venus.png',   has_light: 1 });
-planets.push({ cx: 0, cz: 0, radius: 9.8,  theta: 59, omega: 1.5,  diameter: 0.637, texture: 'res/earth.png',   has_light: 1 });
-planets.push({ cx: 0, cz: 0, radius: 15.1, theta: 36, omega: 1.25, diameter: 0.38,  texture: 'res/mars.png',    has_light: 1 });
-planets.push({ cx: 0, cz: 0, radius: 50,   theta: 65, omega: 0.85, diameter: 6.9,   texture: 'res/jupiter.png', has_light: 1 });
-planets.push({ cx: 0, cz: 0, radius: 93,   theta: 19, omega: 0.85, diameter: 5.8,   texture: 'res/saturn.png',  has_light: 1 });
-planets.push({ cx: 0, cz: 0, radius: 190,  theta: 81, omega: 0.85, diameter: 2.5,   texture: 'res/uranus.png',  has_light: 1 });
-planets.push({ cx: 0, cz: 0, radius: 300,  theta: 8,  omega: 0.5,  diameter: 2.4,   texture: 'res/neptune.png', has_light: 1 });
+planets.push({ name: 'Sun', cx: 0, cz: 0, radius: 1,    theta: 16, omega: 2,    diameter: 1,     texture: 'res/sun.png',     has_light: 0 });
+planets.push({ name: 'Mercury', cx: 0, cz: 0, radius: 4.6,  theta: 47, omega: 1.9,  diameter: 0.25,  texture: 'res/mercury.png', has_light: 1 });
+planets.push({ name: 'Venus', cx: 0, cz: 0, radius: 7.1,  theta: 22, omega: 1.75, diameter: 0.6,   texture: 'res/venus.png',   has_light: 1 });
+planets.push({ name: 'Earth', cx: 0, cz: 0, radius: 9.8,  theta: 59, omega: 1.5,  diameter: 0.637, texture: 'res/earth.png',   has_light: 1 });
+planets.push({ name: 'Mars', cx: 0, cz: 0, radius: 15.1, theta: 36, omega: 1.25, diameter: 0.38,  texture: 'res/mars.png',    has_light: 1 });
+planets.push({ name: 'Jupiter', cx: 0, cz: 0, radius: 50,   theta: 65, omega: 0.85, diameter: 6.9,   texture: 'res/jupiter.png', has_light: 1 });
+planets.push({ name: 'Saturn', cx: 0, cz: 0, radius: 93,   theta: 19, omega: 0.85, diameter: 5.8,   texture: 'res/saturn.png',  rings: 'res/saturn_rings.png', has_light: 1 });
+planets.push({ name: 'Uranus', cx: 0, cz: 0, radius: 190,  theta: 81, omega: 0.85, diameter: 2.5,   texture: 'res/uranus.png',  rings: 'res/uranus_rings.png', has_light: 1 });
+planets.push({ name: 'Neptune', cx: 0, cz: 0, radius: 300,  theta: 8,  omega: 0.5,  diameter: 2.4,   texture: 'res/neptune.png', has_light: 1 });
 
 // based on previous array, create an array of Three.js Meshes to add to the planets scene;
 // also asign custom shader materials to render textures and light 
 var meshes = [];
 for (var i = 0; i < planets.length; i++){
+	// add planets
 	meshes.push(new THREE.Mesh(
 		new THREE.SphereGeometry(planets[i].diameter, 32, 32),
 		new THREE.ShaderMaterial({
 			uniforms: { 
 				texture1: { type:"t", value: THREE.ImageUtils.loadTexture(planets[i].texture) },
-				has_light: { type: "i", value: planets[i].has_light }
+				has_light: { type: "i", value: planets[i].has_light },
 			},
 			vertexShader:  loadShader('shaders/planets.vertex'),
 		    fragmentShader: loadShader('shaders/planets.fragment')
@@ -84,7 +85,7 @@ var sprite = new THREE.Sprite( spriteMaterial );
 sprite.scale.set(3.25, 3.25, 1.0);
 meshes[0].add(sprite); // this centers the glow at the sun mesh (the first mesh)
 
-// and finally add the orbits
+// and add the orbits
 for (var i = 0; i < planets.length; i++){
 	material = new THREE.LineBasicMaterial( { 
 		color: 0xffffff,
@@ -112,6 +113,33 @@ for (var i = 0; i < planets.length; i++){
 	));
 	glowScene.add(glowmeshes[i]);
 }
+
+///////////////////////////////////////////////////////////////
+// Create the Blur scene for the rings
+var rings = [];
+// var r = 0;
+for (var i = 0; i < planets.length; i++){
+	// add rings, if any
+	if (planets[i].rings != null){
+		rings.push(new THREE.Mesh(
+			new THREE.CylinderGeometry(18, 15, 0, 32, 1, true),
+			new THREE.MeshBasicMaterial({
+				map: THREE.ImageUtils.loadTexture(planets[i].rings),
+				color: 0xffffff,
+				transparent: true,
+				opacity: 0.5,
+				side: THREE.DoubleSide
+			})
+		));
+	}
+}
+
+rings[0].rotation.x = -Math.PI/4;
+// rings[0].scale.z = 0.01;
+rings[1].scale.set(0.5, 0.5, 0.5);
+rings[1].rotation.x = Math.PI/1.85;
+planetsScene.add(rings[0]);
+planetsScene.add(rings[1]);
 
 ///////////////////////////////////////////////////////////////
 // Prepare rendering passes
@@ -173,14 +201,23 @@ var render = function () {
 	controls.update();
 
 	// perform simple integration to move the bodies forward
+	var r = 0;
 	for (var i = 1; i < planets.length; i++){
 		var acc = (-1/planets[i].radius)*Math.sin(planets[i].theta);
 		planets[i].omega += acc * DT;
 		planets[i].theta += planets[i].omega * DT;
+		// update meshes
 		meshes[i].position.x = planets[i].radius * Math.cos(planets[i].theta) + planets[i].cx;
 		meshes[i].position.z = planets[i].cz - planets[i].radius * Math.sin(planets[i].theta);
+		// update glowmeshes
 		glowmeshes[i].position.x = meshes[i].position.x;
 		glowmeshes[i].position.z = meshes[i].position.z;
+		// update rings
+		if(planets[i].rings != null){
+			rings[r].position.x = meshes[i].position.x;
+			rings[r].position.z = meshes[i].position.z;
+			r++;
+		}
 	}
 
 	// 1. clear the renderer and draw the skybox first
@@ -196,6 +233,10 @@ var render = function () {
 	renderer.render(vblurScene, orthoCamera);
 	// 5. render the initial scene on top of it all
 	renderer.render(planetsScene, camera);
+
+	renderer.render(ringsScene, camera, offscreenTexture, true);
+	renderer.render(hblurScene, orthoCamera);
+	renderer.render(vblurScene, orthoCamera);
 };
 
 render();

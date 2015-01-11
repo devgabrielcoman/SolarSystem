@@ -50,7 +50,7 @@ function makeTextSprite( message, parameters )
 	var spriteMaterial = new THREE.SpriteMaterial( 
 		{ map: texture } );
 	var sprite = new THREE.Sprite( spriteMaterial );
-	sprite.scale.set(10,5,1.0);
+	// sprite.scale.set(10,5,1.0);
 	return sprite;	
 }
 
